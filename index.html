@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A personal corner of the web for Gabby Miles."
+    />
+    <title>All About Me — Gabby Miles</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <nav class="nav container" aria-label="Main navigation">
+        <a class="brand" href="#top" aria-label="Back to top">GM<span>.</span></a>
+        <div class="nav-links">
+          <a href="#about">About</a>
+          <a href="#now">Right now</a>
+          <a href="#favorites">Favorites</a>
+          <a class="nav-pill" href="#say-hi">Say hi <span>↗</span></a>
+        </div>
+      </nav>
+
+      <main id="top">
+        <section class="hero container">
+          <div class="hero-copy">
+            <p class="eyebrow"><span class="eyebrow-dot"></span> A little corner of the internet</p>
+            <h1>Hi, I’m<br /><em>Gabby.</em></h1>
+            <p class="hero-text">
+              Welcome to my corner of the web. This is where I’m collecting
+              the things I’m learning, making, loving, and looking forward to.
+            </p>
+            <a class="button button-dark" href="#about">Get to know me <span>↓</span></a>
+          </div>
+          <div class="hero-art" aria-label="Decorative portrait placeholder">
+            <div class="sun"></div>
+            <div class="arch">
+              <div class="portrait">
+                <div class="portrait-hair"></div>
+                <div class="portrait-face">
+                  <span class="eye eye-left"></span>
+                  <span class="eye eye-right"></span>
+                  <span class="smile"></span>
+                </div>
+                <div class="portrait-shirt"></div>
+              </div>
+            </div>
+            <div class="spark spark-one">✦</div>
+            <div class="spark spark-two">✳</div>
+            <span class="art-note">currently<br />growing ↓</span>
+          </div>
+        </section>
+
+        <section class="about section container" id="about">
+          <div class="section-label">01 / About me</div>
+          <div class="about-grid">
+            <div>
+              <h2>A work in<br /><em>progress.</em></h2>
+            </div>
+            <div class="about-copy">
+              <p class="lead">
+                I’m curious by nature and happiest when I’m learning something
+                new, making something useful, or sharing a good conversation.
+              </p>
+              <p>
+                This space is a snapshot of who I am right now. I’ll keep
+                adding to it as I go — new projects, new places, and the small
+                details that make a life feel like mine.
+              </p>
+              <a class="text-link" href="#say-hi">Let’s connect <span>↗</span></a>
+            </div>
+          </div>
+        </section>
+
+        <section class="now section container" id="now">
+          <div class="section-label">02 / Right now</div>
+          <div class="now-heading">
+            <h2>Currently<br /><em>into...</em></h2>
+            <p>Some things taking up space in my brain lately.</p>
+          </div>
+          <div class="interest-grid">
+            <article class="interest-card interest-lilac">
+              <span class="card-number">01</span>
+              <span class="card-icon">✎</span>
+              <h3>Making<br />things</h3>
+              <p>Creative projects, fresh ideas, and learning by doing.</p>
+            </article>
+            <article class="interest-card interest-yellow">
+              <span class="card-number">02</span>
+              <span class="card-icon">◒</span>
+              <h3>Finding<br />balance</h3>
+              <p>Slower mornings, better routines, and time outside.</p>
+            </article>
+            <article class="interest-card interest-coral">
+              <span class="card-number">03</span>
+              <span class="card-icon">✦</span>
+              <h3>Staying<br />curious</h3>
+              <p>Good questions, unexpected rabbit holes, and new perspectives.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="favorites section container" id="favorites">
+          <div class="section-label">03 / Favorites</div>
+          <div class="favorites-layout">
+            <h2>A few<br /><em>favorites.</em></h2>
+            <div class="favorite-list">
+              <div class="favorite-row">
+                <span class="favorite-label">Comfort food</span>
+                <strong>Something warm + a little spicy</strong>
+                <span class="favorite-arrow">↗</span>
+              </div>
+              <div class="favorite-row">
+                <span class="favorite-label">Ideal weekend</span>
+                <strong>Good coffee, a long walk, no rush</strong>
+                <span class="favorite-arrow">↗</span>
+              </div>
+              <div class="favorite-row">
+                <span class="favorite-label">Current soundtrack</span>
+                <strong>Anything that makes me want to move</strong>
+                <span class="favorite-arrow">↗</span>
+              </div>
+              <div class="favorite-row">
+                <span class="favorite-label">Tiny joy</span>
+                <strong>When a plan comes together</strong>
+                <span class="favorite-arrow">↗</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="say-hi section container" id="say-hi">
+          <div class="say-hi-card">
+            <div>
+              <p class="eyebrow eyebrow-light"><span class="eyebrow-dot"></span> Thanks for stopping by</p>
+              <h2>Let’s make<br /><em>something good.</em></h2>
+            </div>
+            <a class="button button-light" href="mailto:hello@example.com">Say hello <span>↗</span></a>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer container">
+        <span>© <span id="year"></span> Gabby Miles</span>
+        <span>Made with curiosity <span class="footer-heart">♥</span></span>
+      </footer>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -2,105 +2,19 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234f46e5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='8' r='5'/><path d='M20 21a8 8 0 1 0-16 0'/></svg>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Gabby's personal space on the web." />
-    <title>Gabby — All About Me</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
+    <title>All About Me</title>
+    <meta name="description" content="A school portfolio project featuring Gabriella's personal bio, family and pets, favorite things, goals, and interactive trivia." />
+    <meta property="og:title" content="All About Me" />
+    <meta property="og:description" content="A school portfolio project featuring Gabriella's personal bio, family and pets, favorite things, goals, and interactive trivia." />
+    <meta property="og:type" content="website" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Dancing+Script:wght@600;700&family=Great+Vibes&display=swap" rel="stylesheet">
   </head>
-  <body>
-    <div class="app-shell">
-      <aside class="sidebar" aria-label="Site navigation">
-        <div class="sidebar-brand">
-          <div class="brand-mark">g<span>.</span></div>
-          <div><strong>gabby</strong><small>personal space</small></div>
-        </div>
-
-        <div class="sidebar-label">Workspace</div>
-        <nav class="sidebar-nav">
-          <button class="sidebar-item is-active" data-view="home" type="button"><span class="sidebar-icon">⌂</span><span>Home</span></button>
-          <button class="sidebar-item" data-view="about" type="button"><span class="sidebar-icon">✦</span><span>About me</span></button>
-          <button class="sidebar-item" data-view="git" type="button"><span class="sidebar-icon">⑂</span><span>Git</span><span class="nav-badge">1</span></button>
-        </nav>
-
-        <div class="sidebar-label">Repository</div>
-        <section class="repo-card" aria-label="Repository status">
-          <div class="repo-status"><span class="status-dot"></span><span id="repo-status">Connected</span></div>
-          <strong>All-about-me-2nd-repo</strong>
-          <div class="repo-meta"><span>main</span><span id="sync-state">Up to date</span></div>
-          <div class="repo-actions">
-            <button class="repo-button repo-button-light" data-git-action="connect" type="button">Connect</button>
-            <button class="repo-button" data-git-action="pull" type="button">Pull</button>
-            <button class="repo-button" data-git-action="push" type="button">Push</button>
-          </div>
-        </section>
-
-        <div class="sidebar-bottom">
-          <button class="sidebar-item" data-view="settings" type="button"><span class="sidebar-icon">⚙</span><span>Settings</span></button>
-          <div class="sidebar-user"><span class="avatar">GM</span><span><strong>Gabby Miles</strong><small>Owner</small></span></div>
-        </div>
-      </aside>
-
-      <main class="site-main">
-        <div class="mobile-topbar"><span class="brand-mark">g<span>.</span></span><button class="mobile-git" data-view="git" type="button">⑂ Git</button></div>
-
-        <section class="view-panel is-visible" id="home-view" data-panel="home">
-          <header class="nav container">
-            <a class="brand" href="#home">gabby<span>.</span></a>
-            <nav class="nav-links" aria-label="Page links"><a href="#about">about</a><a href="#interests">interests</a><a href="#favorites">favorites</a><a class="nav-pill" href="#say-hi">say hi <span>↗</span></a></nav>
-          </header>
-
-          <div class="container">
-            <section class="hero" id="home">
-              <div class="hero-copy">
-                <div class="eyebrow"><span class="eyebrow-dot"></span> a little corner of the internet</div>
-                <h1>Hi, I'm<br /><em>Gabby.</em></h1>
-                <p class="hero-text">A curious human collecting good ideas, tiny joys, and stories worth keeping. This is the short version of me.</p>
-                <a class="button button-dark" href="#about">Get to know me <span>↓</span></a>
-              </div>
-              <div class="hero-art" aria-hidden="true"><div class="sun"></div><div class="arch"><div class="arch-inner"><span>hello</span><strong>there</strong></div></div><div class="scribble">✳</div></div>
-            </section>
-
-            <section class="section about-section" id="about">
-              <div class="section-label">01 / about</div>
-              <div class="about-grid"><h2>Made of<br /><em>many things.</em></h2><div class="about-copy"><p>I like conversations that go somewhere, playlists with a plot, and making ordinary days feel a little more intentional.</p><p>Currently learning, noticing, and trying to leave things better than I found them.</p></div></div>
-            </section>
-
-            <section class="section" id="interests">
-              <div class="section-label">02 / interests</div>
-              <div class="interest-grid"><article class="interest-card interest-lilac"><span class="card-number">01</span><span class="card-icon">✎</span><h3>Making<br />things</h3><p>Ideas are more fun once they have somewhere to live.</p></article><article class="interest-card interest-yellow"><span class="card-number">02</span><span class="card-icon">◒</span><h3>Finding<br />stories</h3><p>Books, films, and real-life rabbit holes included.</p></article><article class="interest-card interest-coral"><span class="card-number">03</span><span class="card-icon">♡</span><h3>Good<br />company</h3><p>People who make room for honesty and laughter.</p></article></div>
-            </section>
-
-            <section class="section now-section" id="favorites">
-              <div class="section-label">03 / right now</div>
-              <div class="favorites-layout"><div class="now-heading"><h2>Current<br /><em>favorites.</em></h2><p>A few things making life better lately.</p></div><div class="favorite-list"><div class="favorite-row"><span class="favorite-label">Listening</span><strong>Something with a little soul</strong><span class="favorite-arrow">↗</span></div><div class="favorite-row"><span class="favorite-label">Reading</span><strong>A book I keep recommending</strong><span class="favorite-arrow">↗</span></div><div class="favorite-row"><span class="favorite-label">Drinking</span><strong>Iced coffee, always</strong><span class="favorite-arrow">↗</span></div></div></div>
-            </section>
-
-            <section class="section say-hi" id="say-hi"><div class="say-hi-card"><div><div class="eyebrow eyebrow-light"><span class="eyebrow-dot"></span> your turn</div><h2>Say <em>hi.</em></h2></div><a class="button button-light" href="mailto:hello@example.com">Send a note <span>↗</span></a></div></section>
-            <footer class="footer"><span>© <span id="year"></span> Gabby Miles</span><span>Made with curiosity <span class="footer-heart">♡</span></span></footer>
-          </div>
-        </section>
-
-        <section class="view-panel control-view" id="about-view" data-panel="about" hidden>
-          <div class="control-header"><div><span class="section-label">Workspace</span><h2>A little<br /><em>about me.</em></h2></div><span class="view-kicker">PROFILE / 02</span></div>
-          <div class="control-grid"><article class="control-card control-card-wide"><span class="card-number">01</span><h3>The person behind the page</h3><p>Gabby is curious, creative, and always collecting something: a new idea, a good song, or a reason to make the ordinary feel special.</p></article><article class="control-card control-card-yellow"><span class="card-number">02</span><h3>Small joys</h3><p>Long walks, thoughtful notes, and a perfectly timed playlist.</p></article><article class="control-card control-card-lilac"><span class="card-number">03</span><h3>Current status</h3><p><span class="status-dot"></span> Making things and learning as I go.</p></article></div>
-        </section>
-
-        <section class="view-panel control-view" id="git-view" data-panel="git" hidden>
-          <div class="control-header"><div><span class="section-label">Version control</span><h2>Git<br /><em>controls.</em></h2></div><span class="view-kicker">REPOSITORY / MAIN</span></div>
-          <div class="git-dashboard"><article class="git-status-card"><div class="git-card-heading"><span class="status-dot"></span><span id="git-panel-status">Repository connected</span></div><h3>All-about-me-2nd-repo</h3><p class="muted">Your personal site is linked to the <strong>main</strong> branch.</p><div class="branch-line"><span>⑂ main</span><span id="git-panel-sync">Up to date</span></div><div class="git-actions"><button class="button button-dark" data-git-action="pull" type="button">↓ Pull changes</button><button class="button button-light" data-git-action="push" type="button">↑ Push changes</button></div></article><aside class="activity-card"><span class="section-label">Activity</span><h3 id="activity-title">Ready to sync</h3><p id="activity-copy">Pull to bring remote updates in, or push your latest changes out.</p><div class="activity-line"><span class="activity-dot"></span><span>main is up to date</span></div></aside></div>
-          <p class="control-note">These controls are connected to the site interface. A secure server-side bridge is needed to make browser clicks perform real GitHub operations.</p>
-        </section>
-
-        <section class="view-panel control-view" id="settings-view" data-panel="settings" hidden>
-          <div class="control-header"><div><span class="section-label">Preferences</span><h2>Site<br /><em>settings.</em></h2></div><span class="view-kicker">SETTINGS / 04</span></div>
-          <div class="settings-list"><div class="setting-row"><div><strong>Repository connection</strong><p>Keep the Git panel visible in the sidebar.</p></div><button class="toggle is-on" type="button" aria-pressed="true"><span></span></button></div><div class="setting-row"><div><strong>Show activity updates</strong><p>Display the latest sync message in the Git view.</p></div><button class="toggle is-on" type="button" aria-pressed="true"><span></span></button></div><div class="setting-row"><div><strong>Reduce motion</strong><p>Use fewer hover and transition animations.</p></div><button class="toggle" type="button" aria-pressed="false"><span></span></button></div></div>
-        </section>
-      </main>
-    </div>
-    <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="script.js"></script>
+  <body class="bg-stone-50 text-stone-800 antialiased font-sans min-h-screen">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

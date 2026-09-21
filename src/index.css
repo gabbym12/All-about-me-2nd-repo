@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+
+  h1, h2, h3, .font-serif-display {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+
+  .font-cursive {
+    font-family: 'Great Vibes', 'Dancing Script', cursive;
+  }
+
+  .font-dancing {
+    font-family: 'Dancing Script', 'Great Vibes', cursive;
+  }
+}

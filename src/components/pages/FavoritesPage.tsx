@@ -1,12 +1,11 @@
-import { Star, BookOpen, Music, Film, Utensils, Palette, Sun, HeartHandshake, Dumbbell, ArrowLeft, ArrowRight } from 'lucide-react';
-import { SchoolProjectData, PageId } from '../../types';
+import { Star, BookOpen, Music, Film, Utensils, Palette, Sun, HeartHandshake, Dumbbell } from 'lucide-react';
+import { SchoolProjectData } from '../../types';
 
 interface FavoritesPageProps {
   data: SchoolProjectData;
-  onNavigate: (page: PageId) => void;
 }
 
-export function FavoritesPage({ data, onNavigate }: FavoritesPageProps) {
+export function FavoritesPage({ data }: FavoritesPageProps) {
   const f = data.favorites;
 
   const favoriteItems = [
@@ -60,25 +59,6 @@ export function FavoritesPage({ data, onNavigate }: FavoritesPageProps) {
             </div>
           );
         })}
-      </div>
-
-      {/* Page Navigation Buttons */}
-      <div className="flex items-center justify-between pt-2">
-        <button
-          onClick={() => onNavigate('family')}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-stone-300 hover:bg-stone-50 text-stone-700 text-sm font-semibold transition-colors cursor-pointer"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back: Family &amp; Pets</span>
-        </button>
-
-        <button
-          onClick={() => onNavigate('goals')}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#4a97cb] hover:bg-[#3d83b2] text-white text-sm font-semibold shadow-xs transition-colors cursor-pointer"
-        >
-          <span>Next: Goals &amp; Dreams</span>
-          <ArrowRight className="w-4 h-4" />
-        </button>
       </div>
     </div>
   );

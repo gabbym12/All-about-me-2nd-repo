@@ -1,13 +1,12 @@
-import { Target, CheckCircle2, Circle, Compass, Sparkles, ArrowLeft, ArrowRight } from 'lucide-react';
-import { SchoolProjectData, PageId, GoalItem } from '../../types';
+import { Target, CheckCircle2, Circle, Compass, Sparkles } from 'lucide-react';
+import { SchoolProjectData, GoalItem } from '../../types';
 
 interface GoalsPageProps {
   data: SchoolProjectData;
   onToggleGoal: (goalId: string) => void;
-  onNavigate: (page: PageId) => void;
 }
 
-export function GoalsPage({ data, onToggleGoal, onNavigate }: GoalsPageProps) {
+export function GoalsPage({ data, onToggleGoal }: GoalsPageProps) {
   const getCategoryColor = (category: GoalItem['category']) => {
     switch (category) {
       case 'School':
@@ -116,25 +115,6 @@ export function GoalsPage({ data, onToggleGoal, onNavigate }: GoalsPageProps) {
             );
           })}
         </div>
-      </div>
-
-      {/* Page Navigation Buttons */}
-      <div className="flex items-center justify-between pt-2">
-        <button
-          onClick={() => onNavigate('favorites')}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-stone-300 hover:bg-stone-50 text-stone-700 text-sm font-semibold transition-colors cursor-pointer"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back: Favorites</span>
-        </button>
-
-        <button
-          onClick={() => onNavigate('trivia')}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#4a97cb] hover:bg-[#3d83b2] text-white text-sm font-semibold shadow-xs transition-colors cursor-pointer"
-        >
-          <span>Next: Fun Trivia</span>
-          <ArrowRight className="w-4 h-4" />
-        </button>
       </div>
     </div>
   );

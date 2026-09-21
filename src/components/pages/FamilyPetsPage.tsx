@@ -1,12 +1,11 @@
-import { Heart, ArrowLeft, ArrowRight } from 'lucide-react';
-import { SchoolProjectData, PageId } from '../../types';
+import { Heart } from 'lucide-react';
+import { SchoolProjectData } from '../../types';
 
 interface FamilyPetsPageProps {
   data: SchoolProjectData;
-  onNavigate: (page: PageId) => void;
 }
 
-export function FamilyPetsPage({ data, onNavigate }: FamilyPetsPageProps) {
+export function FamilyPetsPage({ data }: FamilyPetsPageProps) {
   return (
     <div className="space-y-6">
       {/* Intro Card */}
@@ -91,25 +90,6 @@ export function FamilyPetsPage({ data, onNavigate }: FamilyPetsPageProps) {
             {data.favoriteTradition}
           </p>
         </div>
-      </div>
-
-      {/* Page Navigation Buttons */}
-      <div className="flex items-center justify-between pt-2">
-        <button
-          onClick={() => onNavigate('about')}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-stone-300 hover:bg-stone-50 text-stone-700 text-sm font-semibold transition-colors cursor-pointer"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back: About Me</span>
-        </button>
-
-        <button
-          onClick={() => onNavigate('favorites')}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#4a97cb] hover:bg-[#3d83b2] text-white text-sm font-semibold shadow-xs transition-colors cursor-pointer"
-        >
-          <span>Next: My Favorites</span>
-          <ArrowRight className="w-4 h-4" />
-        </button>
       </div>
     </div>
   );

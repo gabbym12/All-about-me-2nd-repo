@@ -1,12 +1,11 @@
-import { Sparkles, Calendar, MapPin, GraduationCap, Quote, ArrowRight } from 'lucide-react';
-import { SchoolProjectData, PageId } from '../../types';
+import { Sparkles, Calendar, MapPin, GraduationCap, Quote } from 'lucide-react';
+import { SchoolProjectData } from '../../types';
 
 interface AboutMePageProps {
   data: SchoolProjectData;
-  onNavigate: (page: PageId) => void;
 }
 
-export function AboutMePage({ data, onNavigate }: AboutMePageProps) {
+export function AboutMePage({ data }: AboutMePageProps) {
   return (
     <div className="space-y-6">
       {/* Quick Stats Grid */}
@@ -88,17 +87,6 @@ export function AboutMePage({ data, onNavigate }: AboutMePageProps) {
             </p>
           </div>
         </div>
-      </div>
-
-      {/* Page Navigation Footer */}
-      <div className="flex justify-end pt-2">
-        <button
-          onClick={() => onNavigate('family')}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#4a97cb] hover:bg-[#3d83b2] text-white text-sm font-semibold shadow-xs transition-colors cursor-pointer"
-        >
-          <span>Next: Family &amp; Pets</span>
-          <ArrowRight className="w-4 h-4" />
-        </button>
       </div>
     </div>
   );

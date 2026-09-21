@@ -1,14 +1,13 @@
 import { useState } from 'react';
-import { HelpCircle, CheckCircle2, XCircle, RotateCcw, Trophy, ArrowLeft, Sparkles } from 'lucide-react';
-import { FunFact, PageId } from '../../types';
+import { HelpCircle, CheckCircle2, XCircle, RotateCcw, Trophy } from 'lucide-react';
+import { FunFact } from '../../types';
 
 interface TriviaPageProps {
   questions: FunFact[];
   name: string;
-  onNavigate: (page: PageId) => void;
 }
 
-export function TriviaPage({ questions, name, onNavigate }: TriviaPageProps) {
+export function TriviaPage({ questions, name }: TriviaPageProps) {
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, number>>({});
   const [showResults, setShowResults] = useState<Record<string, boolean>>({});
 
@@ -142,25 +141,6 @@ export function TriviaPage({ questions, name, onNavigate }: TriviaPageProps) {
             </div>
           );
         })}
-      </div>
-
-      {/* Page Navigation Buttons */}
-      <div className="flex items-center justify-between pt-2">
-        <button
-          onClick={() => onNavigate('goals')}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-stone-300 hover:bg-stone-50 text-stone-700 text-sm font-semibold transition-colors cursor-pointer"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back: Goals</span>
-        </button>
-
-        <button
-          onClick={() => onNavigate('about')}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#4a97cb] hover:bg-[#3d83b2] text-white text-sm font-semibold shadow-xs transition-colors cursor-pointer"
-        >
-          <Sparkles className="w-4 h-4" />
-          <span>Return to Beginning (About Me)</span>
-        </button>
       </div>
     </div>
   );

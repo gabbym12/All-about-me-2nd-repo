@@ -19,3 +19,16 @@ export interface CollageSlotConfig {
   rotation: string;
   pin: boolean;
 }
+
+export interface MediaItem {
+  id: string;
+  name: string;
+  type: 'ARTIST' | 'GENRE';
+}
+
+export interface SportCard {
+  id: string;
+  sport: string;
+  team: string;
+  icon: 'baseball' | 'football';
+}

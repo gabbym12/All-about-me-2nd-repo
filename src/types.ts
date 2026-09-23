@@ -1,6 +1,21 @@
-export interface ProjectPage {
-  id: string;
-  pageNumber: number;
+export type TabKey = 'home' | 'media' | 'gallery' | 'hobbies';
+
+export interface TabConfig {
+  key: TabKey;
+  label: string;
+}
+
+export interface SectionContent {
   title: string;
-  content: string;
+  notes: string;
+}
+
+export type CollageSlotId = 'top-left' | 'top-right' | 'center' | 'bottom-left' | 'bottom-center' | 'bottom-right';
+
+export interface CollageSlotConfig {
+  id: CollageSlotId;
+  label: string;
+  defaultUrl: string;
+  rotation: string;
+  pin: boolean;
 }

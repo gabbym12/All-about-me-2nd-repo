@@ -1,74 +1,87 @@
-import { useState, useEffect, useRef, type ChangeEvent } from 'react';
-import { ProjectPage } from './types';
-import { PageNavigation } from './components/PageNavigation';
+import { useState, useEffect, useRef, type ChangeEvent, type MouseEvent } from 'react';
+import { TabKey, TabConfig, SectionContent, CollageSlotId } from './types';
 import { Plus, X } from 'lucide-react';
+import { ScrapbookCollage } from './components/ScrapbookCollage';
 
-const DEFAULT_PAGES: ProjectPage[] = [
-  { id: 'page-1', pageNumber: 1, title: '', content: '' },
-  { id: 'page-2', pageNumber: 2, title: '', content: '' },
-  { id: 'page-3', pageNumber: 3, title: '', content: '' },
-  { id: 'page-4', pageNumber: 4, title: '', content: '' },
-  { id: 'page-5', pageNumber: 5, title: '', content: '' },
+const TABS: TabConfig[] = [
+  { key: 'home', label: 'Home' },
+  { key: 'media', label: 'Media' },
+  { key: 'gallery', label: 'Gallery' },
+  { key: 'hobbies', label: 'Hobbies' },
 ];
 
+const DEFAULT_SECTIONS: Record<'media' | 'hobbies', SectionContent> = {
+  media: { title: 'Media & Entertainment', notes: '' },
+  hobbies: { title: 'Hobbies & Interests', notes: '' },
+};
+
+const DEFAULT_BANNER_TEXT = 'My Gallery';
+
 export default function App() {
-  const [pages, setPages] = useState<ProjectPage[]>(() => {
+  const [activeTab, setActiveTab] = useState<TabKey>('home');
+  const [userPhoto, setUserPhoto] = useState<string | null>(() => {
+    return localStorage.getItem('gabriella_portfolio_photo');
+  });
+
+  const [sections, setSections] = useState<Record<'media' | 'hobbies', SectionContent>>(() => {
     try {
-      const saved = localStorage.getItem('gabriella_school_project_pages');
+      const saved = localStorage.getItem('gabriella_portfolio_sections_v3');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        return { ...DEFAULT_SECTIONS, ...parsed };
       }
     } catch {
       // ignore
     }
-    return DEFAULT_PAGES;
+    return DEFAULT_SECTIONS;
   });
 
-  const [activePageIndex, setActivePageIndex] = useState(0);
-  const [userPhoto, setUserPhoto] = useState<string | null>(() => {
-    return localStorage.getItem('gabriella_uploaded_photo');
-  });
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
+  // Collage photos by slot ID
+  const [collagePhotos, setCollagePhotos] = useState<Record<CollageSlotId, string>>(() => {
     try {
-      localStorage.setItem('gabriella_school_project_pages', JSON.stringify(pages));
+      const saved = localStorage.getItem('gabriella_collage_photos_v1');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (typeof parsed === 'object' && parsed !== null) return parsed;
+      }
     } catch {
       // ignore
     }
-  }, [pages]);
+    return {} as Record<CollageSlotId, string>;
+  });
 
-  const safeIndex = Math.min(Math.max(0, activePageIndex), pages.length - 1);
-  const currentPage = pages[safeIndex] || pages[0];
+  // Collage banner ribbon title
+  const [bannerText, setBannerText] = useState<string>(() => {
+    return localStorage.getItem('gabriella_collage_banner_v2') || DEFAULT_BANNER_TEXT;
+  });
 
-  const handleUpdateCurrentPage = (updates: Partial<ProjectPage>) => {
-    setPages(prev =>
-      prev.map((p, idx) => (idx === safeIndex ? { ...p, ...updates } : p))
-    );
-  };
+  const homeFileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleAddPage = () => {
-    const newPage: ProjectPage = {
-      id: `page-${Date.now()}`,
-      pageNumber: pages.length + 1,
-      title: '',
-      content: '',
-    };
-    setPages(prev => [...prev, newPage]);
-    setActivePageIndex(pages.length);
-  };
-
-  const handleDeletePage = (indexToDelete: number) => {
-    if (pages.length <= 1) return;
-    setPages(prev => prev.filter((_, idx) => idx !== indexToDelete));
-    if (safeIndex >= pages.length - 1) {
-      setActivePageIndex(Math.max(0, pages.length - 2));
+  useEffect(() => {
+    try {
+      localStorage.setItem('gabriella_portfolio_sections_v3', JSON.stringify(sections));
+    } catch {
+      // ignore
     }
-  };
+  }, [sections]);
 
-  const handlePhotoUpload = (e: ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    try {
+      localStorage.setItem('gabriella_collage_photos_v1', JSON.stringify(collagePhotos));
+    } catch {
+      // ignore
+    }
+  }, [collagePhotos]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('gabriella_collage_banner_v2', bannerText);
+    } catch {
+      // ignore
+    }
+  }, [bannerText]);
+
+  const handleHomePhotoUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -77,84 +90,103 @@ export default function App() {
       if (typeof reader.result === 'string') {
         setUserPhoto(reader.result);
         try {
-          localStorage.setItem('gabriella_uploaded_photo', reader.result);
+          localStorage.setItem('gabriella_portfolio_photo', reader.result);
         } catch {
-          // localStorage might be full for large images
+          // ignore
         }
       }
     };
     reader.readAsDataURL(file);
   };
 
-  const handleRemovePhoto = (e: React.MouseEvent) => {
+  const handleRemoveHomePhoto = (e: MouseEvent) => {
     e.stopPropagation();
     setUserPhoto(null);
     try {
-      localStorage.removeItem('gabriella_uploaded_photo');
+      localStorage.removeItem('gabriella_portfolio_photo');
     } catch {
       // ignore
     }
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+    if (homeFileInputRef.current) {
+      homeFileInputRef.current.value = '';
     }
   };
 
-  const isFirstPage = safeIndex === 0;
+  const handleUpdateCollagePhoto = (slotId: CollageSlotId, dataUrl: string) => {
+    setCollagePhotos(prev => ({
+      ...prev,
+      [slotId]: dataUrl,
+    }));
+  };
+
+  const handleResetCollagePhoto = (slotId: CollageSlotId) => {
+    setCollagePhotos(prev => {
+      const next = { ...prev };
+      delete next[slotId];
+      return next;
+    });
+  };
+
+  const handleUpdateSection = (key: 'media' | 'hobbies', updates: Partial<SectionContent>) => {
+    setSections(prev => ({
+      ...prev,
+      [key]: { ...prev[key], ...updates },
+    }));
+  };
 
   return (
-    <main className="min-h-screen w-full bg-[#f6dae7] flex flex-col items-center justify-start px-4 sm:px-6 pt-8 sm:pt-12 pb-20 font-cursive">
-      {/* Top Header: Always Hi i'm Gabriella on Page 1 */}
-      {isFirstPage ? (
-        <header className="text-center max-w-2xl mx-auto mb-4">
-          <h1
-            id="gabriella-greeting"
-            className="font-cursive text-7xl sm:text-8xl md:text-9xl text-[#8d549f] tracking-normal leading-none select-none transition-all duration-300"
+    <div className="min-h-screen w-full bg-[#faf8f5] flex flex-col text-stone-800">
+      {/* Top Navigation Bar: Gabriella | Home, Media, Gallery, Hobbies */}
+      <header className="w-full border-b border-stone-200/60 bg-[#faf8f5]/95 backdrop-blur-xs sticky top-0 z-30">
+        <div className="max-w-4xl mx-auto px-6 py-5 flex items-center justify-between">
+          {/* Logo: Gabriella in terracotta italic serif */}
+          <button
+            onClick={() => setActiveTab('home')}
+            className="font-serif-italic font-bold text-3xl sm:text-4xl text-[#cf6d4e] tracking-tight hover:opacity-90 transition-opacity cursor-pointer text-left"
           >
-            Hi i'm Gabriella
-          </h1>
-        </header>
-      ) : (
-        /* Header for Pages 2+ */
-        <header className="w-full max-w-xl mx-auto mb-4 text-center">
-          <input
-            type="text"
-            value={currentPage.title}
-            onChange={e => handleUpdateCurrentPage({ title: e.target.value })}
-            placeholder={`Page ${safeIndex + 1}`}
-            className="w-full text-center font-cursive text-5xl sm:text-6xl text-[#8d549f] bg-transparent border-b border-transparent hover:border-[#8d549f]/30 focus:border-[#8d549f] focus:outline-hidden py-1 px-3 placeholder:text-[#8d549f]/40 transition-all"
-          />
-        </header>
-      )}
+            Gabriella
+          </button>
 
-      {/* Navigation Card */}
-      <div className="w-full max-w-xl mx-auto mb-8">
-        <PageNavigation
-          pages={pages}
-          activePageIndex={safeIndex}
-          onSelectPage={idx => setActivePageIndex(idx)}
-          onAddPage={handleAddPage}
-          onDeletePage={handleDeletePage}
-        />
-      </div>
+          {/* Navigation Links: Home, Media, Gallery, Hobbies */}
+          <nav className="flex items-center gap-1 sm:gap-2 overflow-x-auto py-1">
+            {TABS.map(tab => {
+              const isActive = activeTab === tab.key;
+              return (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`px-4 sm:px-5 py-1.5 rounded-full text-sm sm:text-base transition-all cursor-pointer whitespace-nowrap ${
+                    isActive
+                      ? 'bg-[#faeae1] text-[#cf6d4e] font-semibold'
+                      : 'text-stone-700 hover:text-stone-950 font-medium'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+      </header>
 
-      {/* Hidden File Input for Picture Upload */}
+      {/* Hidden File Input for Home Avatar */}
       <input
-        ref={fileInputRef}
+        ref={homeFileInputRef}
         type="file"
         accept="image/*"
-        onChange={handlePhotoUpload}
+        onChange={handleHomePhotoUpload}
         className="hidden"
       />
 
-      {/* Main Page Area */}
-      <section className="w-full max-w-xl mx-auto flex flex-col items-center">
-        {isFirstPage ? (
-          /* First Page matching screenshot */
-          <div className="flex flex-col items-center justify-center w-full">
+      {/* Main Content Area */}
+      <main className="flex-1 flex flex-col items-center justify-start px-3 sm:px-6 pt-8 sm:pt-12 pb-20 max-w-5xl mx-auto w-full">
+        {activeTab === 'home' && (
+          /* HOME TAB - Matching screenshot */
+          <div className="flex flex-col items-center justify-center w-full animate-fade-in">
             {/* The Photo Container */}
             <div
-              onClick={() => fileInputRef.current?.click()}
-              className="w-72 h-72 sm:w-80 sm:h-80 rounded-[36px] bg-white/95 shadow-sm border border-white/90 flex flex-col items-center justify-center cursor-pointer hover:bg-white transition-all overflow-hidden relative group"
+              onClick={() => homeFileInputRef.current?.click()}
+              className="w-72 h-72 sm:w-80 sm:h-80 md:w-[330px] md:h-[330px] rounded-[36px] bg-white shadow-xs border border-stone-200/50 flex flex-col items-center justify-center cursor-pointer hover:shadow-sm transition-all overflow-hidden relative group select-none"
             >
               {userPhoto ? (
                 <>
@@ -165,12 +197,12 @@ export default function App() {
                     className="w-full h-full object-cover rounded-[36px]"
                   />
                   <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                    <span className="px-4 py-1.5 rounded-full bg-white/90 text-[#8d549f] font-cursive text-xl shadow-xs">
+                    <span className="px-4 py-1.5 rounded-full bg-white/95 text-[#cf6d4e] font-medium text-sm shadow-xs">
                       Change Photo
                     </span>
                     <button
-                      onClick={handleRemovePhoto}
-                      className="p-2 rounded-full bg-white/90 text-rose-600 hover:bg-white shadow-xs"
+                      onClick={handleRemoveHomePhoto}
+                      className="p-2 rounded-full bg-white/95 text-rose-600 hover:bg-white shadow-xs"
                       title="Remove photo"
                     >
                       <X className="w-4 h-4" />
@@ -179,12 +211,12 @@ export default function App() {
                 </>
               ) : (
                 <>
-                  {/* Purple Circular Plus Icon */}
-                  <div className="w-12 h-12 rounded-full bg-[#8d549f] text-white flex items-center justify-center shadow-xs mb-3 group-hover:scale-105 transition-transform">
-                    <Plus className="w-6 h-6 stroke-[2.5]" />
+                  {/* Terracotta Circular Plus Button */}
+                  <div className="w-12 h-12 rounded-full bg-[#cf6d4e] text-white flex items-center justify-center shadow-xs mb-3.5 group-hover:scale-105 transition-transform">
+                    <Plus className="w-5 h-5 stroke-[2.5]" />
                   </div>
                   {/* "Add one photo" label */}
-                  <span className="text-[#8a7686] font-sans text-base font-normal select-none">
+                  <span className="text-stone-400 font-sans text-sm sm:text-base font-normal">
                     Add one photo
                   </span>
                 </>
@@ -192,42 +224,67 @@ export default function App() {
             </div>
 
             {/* DOB Section in Cursive */}
-            <div className="text-center mt-6 select-none">
-              <h2 className="font-cursive text-6xl sm:text-7xl text-[#8d549f] leading-tight">
+            <div className="text-center mt-8 select-none">
+              <h2 className="font-cursive text-6xl sm:text-7xl md:text-8xl text-[#cf6d4e] leading-none">
                 DOB: 06/15/12
               </h2>
-              <p className="font-cursive text-3xl sm:text-4xl text-[#8d549f] mt-1">
+              <p className="font-cursive text-3xl sm:text-4xl text-[#6c5b52] mt-2">
                 June 15, 2012
               </p>
               <button
-                onClick={() => fileInputRef.current?.click()}
-                className="font-cursive text-2xl sm:text-3xl text-[#8d549f] mt-2 underline underline-offset-4 decoration-[#8d549f]/70 hover:opacity-80 transition-opacity cursor-pointer block mx-auto"
+                onClick={() => homeFileInputRef.current?.click()}
+                className="font-cursive text-2xl sm:text-3xl text-[#cf6d4e] mt-3 underline underline-offset-4 decoration-[#cf6d4e]/70 hover:opacity-80 transition-opacity cursor-pointer block mx-auto"
               >
                 Upload your own picture
               </button>
             </div>
           </div>
-        ) : (
-          /* Blank Pages 2+ */
-          <div className="w-full bg-white/90 focus-within:bg-white transition-all rounded-[32px] p-6 sm:p-8 shadow-sm border border-white min-h-[420px] flex flex-col">
-            <textarea
-              value={currentPage.content}
-              onChange={e => handleUpdateCurrentPage({ content: e.target.value })}
-              placeholder={`Page ${safeIndex + 1} is ready for your ideas...`}
-              className="w-full flex-1 min-h-[340px] bg-transparent text-stone-800 font-cursive text-2xl sm:text-3xl leading-relaxed placeholder:text-[#8d549f]/40 focus:outline-hidden resize-none"
-            />
+        )}
 
-            <div className="mt-3 pt-3 border-t border-pink-100 flex items-center justify-between text-xl text-[#8d549f] select-none">
-              <span>
-                Page {safeIndex + 1} of {pages.length}
-              </span>
-              <span className="italic">
-                {currentPage.content.trim().length > 0 ? 'Saved' : 'Blank'}
-              </span>
+        {activeTab === 'gallery' && (
+          /* GALLERY TAB: Scrapbook Collage matching screenshot */
+          <div className="w-full flex flex-col items-center animate-fade-in">
+            <ScrapbookCollage
+              photos={collagePhotos}
+              bannerText={bannerText}
+              onUpdatePhoto={handleUpdateCollagePhoto}
+              onResetPhoto={handleResetCollagePhoto}
+              onUpdateBannerText={setBannerText}
+            />
+          </div>
+        )}
+
+        {(activeTab === 'media' || activeTab === 'hobbies') && (
+          /* MEDIA & HOBBIES TABS */
+          <div className="w-full max-w-2xl mx-auto flex flex-col items-center animate-fade-in">
+            <div className="w-full text-center mb-6">
+              <input
+                type="text"
+                value={sections[activeTab].title}
+                onChange={e => handleUpdateSection(activeTab, { title: e.target.value })}
+                className="font-serif-italic font-bold text-3xl sm:text-4xl md:text-5xl text-[#cf6d4e] text-center bg-transparent border-b border-transparent hover:border-stone-200 focus:border-[#cf6d4e] focus:outline-hidden py-1 px-3 transition-all w-full"
+                placeholder={TABS.find(t => t.key === activeTab)?.label}
+              />
+            </div>
+
+            <div className="w-full bg-white rounded-[32px] p-8 sm:p-10 shadow-xs border border-stone-200/50 min-h-[420px] flex flex-col">
+              <textarea
+                value={sections[activeTab].notes}
+                onChange={e => handleUpdateSection(activeTab, { notes: e.target.value })}
+                placeholder={`Share your thoughts, favorites, and ideas about ${TABS.find(t => t.key === activeTab)?.label}...`}
+                className="w-full flex-1 min-h-[340px] bg-transparent text-stone-800 text-base sm:text-lg leading-relaxed placeholder:text-stone-400 focus:outline-hidden resize-none"
+              />
+
+              <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-xs text-stone-400 select-none">
+                <span className="capitalize">{activeTab} section</span>
+                <span className="italic text-[#cf6d4e]">
+                  {sections[activeTab].notes.trim().length > 0 ? 'Saved automatically' : 'Ready for your ideas'}
+                </span>
+              </div>
             </div>
           </div>
         )}
-      </section>
-    </main>
+      </main>
+    </div>
   );
 }

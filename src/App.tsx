@@ -1,290 +1,301 @@
-import { useState, useEffect, useRef, type ChangeEvent, type MouseEvent } from 'react';
-import { TabKey, TabConfig, SectionContent, CollageSlotId } from './types';
-import { Plus, X } from 'lucide-react';
-import { ScrapbookCollage } from './components/ScrapbookCollage';
+import { type ChangeEvent, useState } from 'react';
 
-const TABS: TabConfig[] = [
-  { key: 'home', label: 'Home' },
-  { key: 'media', label: 'Media' },
-  { key: 'gallery', label: 'Gallery' },
-  { key: 'hobbies', label: 'Hobbies' },
-];
-
-const DEFAULT_SECTIONS: Record<'media' | 'hobbies', SectionContent> = {
-  media: { title: 'Media & Entertainment', notes: '' },
-  hobbies: { title: 'Hobbies & Interests', notes: '' },
+type Page = {
+  id: number;
+  title: string;
+  body: string;
+  footer: string;
 };
 
-const DEFAULT_BANNER_TEXT = 'My Gallery';
+const pageLabels = ['Home', 'Media', 'Gallery', 'Hobbies'];
+const musicItems = [
+  { name: 'Ashanti', label: 'Artist' },
+  { name: 'Frank Ocean', label: 'Artist' },
+  { name: 'Rap', label: 'Genre' },
+  { name: 'R&B', label: 'Genre' },
+];
+const sportsTeams = [
+  { name: 'San Diego Padres', sport: 'Baseball', className: 'padres-team', symbol: '⚾' },
+  { name: 'Los Angeles Chargers', sport: 'Football', className: 'chargers-team', symbol: '⚡' },
+];
+const gallerySlotClasses = [
+  'gallery-photo-top-left',
+  'gallery-photo-top-right',
+  'gallery-photo-center',
+  'gallery-photo-bottom-left',
+  'gallery-photo-bottom-right',
+  'gallery-photo-bottom-center',
+];
+const startingGalleryImages: Array<string | null> = [
+  'gallery-photo-1.jpg',
+  'gallery-photo-2.jpg',
+  'gallery-photo.png',
+  'gallery-photo-3.jpg',
+  'gallery-photo-4.jpg',
+  'gallery-photo-5.jpg',
+];
 
-export default function App() {
-  const [activeTab, setActiveTab] = useState<TabKey>('home');
-  const [userPhoto, setUserPhoto] = useState<string | null>(() => {
-    return localStorage.getItem('gabriella_portfolio_photo');
-  });
+const startingPages: Page[] = [
+  {
+    id: 1,
+    title: '',
+    body: '',
+    footer: 'Blank page',
+  },
+  {
+    id: 2,
+    title: 'Artists I Like',
+    body: 'I like listening to rap and R&B.',
+    footer: 'My music',
+  },
+  {
+    id: 3,
+    title: 'My Hobbies',
+    body: 'I enjoy listening to music, making creative projects, spending time with friends, and exploring new ideas.',
+    footer: 'Things I enjoy',
+  },
+  {
+    id: 4,
+    title: 'My Hobbies',
+    body: 'I love spending time with my friends and family. I also enjoy playing sports and cheering on my favorite teams. Whether I am on the field or watching a game, sports are always something I look forward to.',
+    footer: 'Things I enjoy',
+  },
+];
 
-  const [sections, setSections] = useState<Record<'media' | 'hobbies', SectionContent>>(() => {
-    try {
-      const saved = localStorage.getItem('gabriella_portfolio_sections_v3');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        return { ...DEFAULT_SECTIONS, ...parsed };
-      }
-    } catch {
-      // ignore
-    }
-    return DEFAULT_SECTIONS;
-  });
+function App() {
+  const [pages, setPages] = useState<Page[]>(startingPages);
+  const [activePage, setActivePage] = useState(0);
+  const [profilePhoto, setProfilePhoto] = useState<string | null>('profile-photo.jpg');
+  const [galleryImages, setGalleryImages] = useState<Array<string | null>>(
+    startingGalleryImages,
+  );
 
-  // Collage photos by slot ID
-  const [collagePhotos, setCollagePhotos] = useState<Record<CollageSlotId, string>>(() => {
-    try {
-      const saved = localStorage.getItem('gabriella_collage_photos_v1');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (typeof parsed === 'object' && parsed !== null) return parsed;
-      }
-    } catch {
-      // ignore
-    }
-    return {} as Record<CollageSlotId, string>;
-  });
+  const page = pages[activePage];
 
-  // Collage banner ribbon title
-  const [bannerText, setBannerText] = useState<string>(() => {
-    return localStorage.getItem('gabriella_collage_banner_v2') || DEFAULT_BANNER_TEXT;
-  });
+  function selectPage(index: number) {
+    setActivePage(index);
+  }
 
-  const homeFileInputRef = useRef<HTMLInputElement>(null);
+  function updatePage(event: ChangeEvent<HTMLTextAreaElement>) {
+    const { name, value } = event.target;
+    setPages((current) =>
+      current.map((item, index) =>
+        index === activePage ? { ...item, [name]: value } : item,
+      ),
+    );
+  }
 
-  useEffect(() => {
-    try {
-      localStorage.setItem('gabriella_portfolio_sections_v3', JSON.stringify(sections));
-    } catch {
-      // ignore
-    }
-  }, [sections]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem('gabriella_collage_photos_v1', JSON.stringify(collagePhotos));
-    } catch {
-      // ignore
-    }
-  }, [collagePhotos]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem('gabriella_collage_banner_v2', bannerText);
-    } catch {
-      // ignore
-    }
-  }, [bannerText]);
-
-  const handleHomePhotoUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  function handlePhotoChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.addEventListener('load', () => {
       if (typeof reader.result === 'string') {
-        setUserPhoto(reader.result);
-        try {
-          localStorage.setItem('gabriella_portfolio_photo', reader.result);
-        } catch {
-          // ignore
-        }
+        setProfilePhoto(reader.result);
       }
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleRemoveHomePhoto = (e: MouseEvent) => {
-    e.stopPropagation();
-    setUserPhoto(null);
-    try {
-      localStorage.removeItem('gabriella_portfolio_photo');
-    } catch {
-      // ignore
-    }
-    if (homeFileInputRef.current) {
-      homeFileInputRef.current.value = '';
-    }
-  };
-
-  const handleUpdateCollagePhoto = (slotId: CollageSlotId, dataUrl: string) => {
-    setCollagePhotos(prev => ({
-      ...prev,
-      [slotId]: dataUrl,
-    }));
-  };
-
-  const handleResetCollagePhoto = (slotId: CollageSlotId) => {
-    setCollagePhotos(prev => {
-      const next = { ...prev };
-      delete next[slotId];
-      return next;
     });
-  };
+    reader.readAsDataURL(file);
+  }
 
-  const handleUpdateSection = (key: 'media' | 'hobbies', updates: Partial<SectionContent>) => {
-    setSections(prev => ({
-      ...prev,
-      [key]: { ...prev[key], ...updates },
-    }));
-  };
+  function handleGalleryImageChange(slotIndex: number, event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.addEventListener('load', () => {
+      if (typeof reader.result === 'string') {
+        setGalleryImages((current) =>
+          current.map((image, index) => (index === slotIndex ? reader.result as string : image)),
+        );
+      }
+    });
+    reader.readAsDataURL(file);
+    event.target.value = '';
+  }
 
   return (
-    <div className="min-h-screen w-full bg-[#faf8f5] flex flex-col text-stone-800">
-      {/* Top Navigation Bar: Gabriella | Home, Media, Gallery, Hobbies */}
-      <header className="w-full border-b border-stone-200/60 bg-[#faf8f5]/95 backdrop-blur-xs sticky top-0 z-30">
-        <div className="max-w-4xl mx-auto px-6 py-5 flex items-center justify-between">
-          {/* Logo: Gabriella in terracotta italic serif */}
-          <button
-            onClick={() => setActiveTab('home')}
-            className="font-serif-italic font-bold text-3xl sm:text-4xl text-[#cf6d4e] tracking-tight hover:opacity-90 transition-opacity cursor-pointer text-left"
-          >
-            Gabriella
-          </button>
-
-          {/* Navigation Links: Home, Media, Gallery, Hobbies */}
-          <nav className="flex items-center gap-1 sm:gap-2 overflow-x-auto py-1">
-            {TABS.map(tab => {
-              const isActive = activeTab === tab.key;
-              return (
-                <button
-                  key={tab.key}
-                  onClick={() => setActiveTab(tab.key)}
-                  className={`px-4 sm:px-5 py-1.5 rounded-full text-sm sm:text-base transition-all cursor-pointer whitespace-nowrap ${
-                    isActive
-                      ? 'bg-[#faeae1] text-[#cf6d4e] font-semibold'
-                      : 'text-stone-700 hover:text-stone-950 font-medium'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
-          </nav>
+    <div className="preview-shell">
+      <header className="preview-toolbar">
+        <div className="preview-toolbar-tabs">
+          <button className="is-active" type="button">Preview</button>
+          <button type="button">Code</button>
+        </div>
+        <div className="preview-toolbar-tools">
+          <span aria-hidden="true">▣</span>
+          <span>/</span>
+          <span aria-hidden="true">↻</span>
+          <span aria-hidden="true">⛶</span>
         </div>
       </header>
 
-      {/* Hidden File Input for Home Avatar */}
-      <input
-        ref={homeFileInputRef}
-        type="file"
-        accept="image/*"
-        onChange={handleHomePhotoUpload}
-        className="hidden"
-      />
+      <main className="page-studio">
+        <div className="site-content">
+          <nav className="website-nav" aria-label="Website pages">
+            <button className="website-brand" type="button" onClick={() => selectPage(0)}>
+              Gabriella
+            </button>
+            <div className="website-links">
+              {pages.map((item, index) => (
+                <button
+                  className={`website-link ${index === activePage ? 'is-active' : ''}`}
+                  key={item.id}
+                  type="button"
+                  onClick={() => selectPage(index)}
+                >
+                  {pageLabels[index]}
+                </button>
+              ))}
+            </div>
+          </nav>
 
-      {/* Main Content Area */}
-      <main className="flex-1 flex flex-col items-center justify-start px-3 sm:px-6 pt-8 sm:pt-12 pb-20 max-w-5xl mx-auto w-full">
-        {activeTab === 'home' && (
-          /* HOME TAB - Matching screenshot */
-          <div className="flex flex-col items-center justify-center w-full animate-fade-in">
-            {/* The Photo Container */}
-            <div
-              onClick={() => homeFileInputRef.current?.click()}
-              className="w-72 h-72 sm:w-80 sm:h-80 md:w-[330px] md:h-[330px] rounded-[36px] bg-white shadow-xs border border-stone-200/50 flex flex-col items-center justify-center cursor-pointer hover:shadow-sm transition-all overflow-hidden relative group select-none"
-            >
-              {userPhoto ? (
-                <>
-                  <img
-                    src={userPhoto}
-                    alt="Gabriella"
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover rounded-[36px]"
-                  />
-                  <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                    <span className="px-4 py-1.5 rounded-full bg-white/95 text-[#cf6d4e] font-medium text-sm shadow-xs">
-                      Change Photo
-                    </span>
-                    <button
-                      onClick={handleRemoveHomePhoto}
-                      className="p-2 rounded-full bg-white/95 text-rose-600 hover:bg-white shadow-xs"
-                      title="Remove photo"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
+          <section className="page-card" aria-label={`Page ${page.id} editor`}>
+            <div className="page-editor">
+              {activePage === 0 ? (
+                <div className="first-page-profile">
+                  <label className="profile-photo-picker">
+                    {profilePhoto ? (
+                      <>
+                        <img src={profilePhoto} alt="Your uploaded profile photo" />
+                        <span className="change-photo-badge"><span aria-hidden="true">▣</span> Change Photo</span>
+                      </>
+                    ) : (
+                      <span className="photo-upload-placeholder"><strong>+</strong> Add one photo</span>
+                    )}
+                    <input
+                      type="file"
+                      accept=".png,.jpg,.jpeg,.webp"
+                      onChange={handlePhotoChange}
+                      aria-label="Add one photo to the first page"
+                    />
+                  </label>
+                  <div className="profile-dob">
+                    <strong>DOB: 06/15/12</strong>
+                    <em>June 15, 2012</em>
                   </div>
-                </>
+                  <label className="upload-link">
+                    Upload your own picture
+                    <input
+                      type="file"
+                      accept=".png,.jpg,.jpeg,.webp"
+                      onChange={handlePhotoChange}
+                      aria-label="Upload your own picture"
+                    />
+                  </label>
+                </div>
+              ) : activePage === 2 ? (
+                <div className="gallery-slide">
+                  <div className="gallery-banner">
+                    <span>My Gallery</span>
+                  </div>
+
+                  <div className="gallery-collage">
+                    {gallerySlotClasses.map((slotClass, index) => (
+                      <label className={`gallery-photo ${slotClass}`} key={slotClass}>
+                        {galleryImages[index] ? (
+                          <>
+                            <img src={galleryImages[index] ?? ''} alt={`Gallery photo ${index + 1}`} />
+                            <span className="gallery-change-hint">Change photo</span>
+                          </>
+                        ) : (
+                          <span className="gallery-photo-placeholder">
+                            <strong>+</strong>
+                            <small>Add photo</small>
+                          </span>
+                        )}
+                        <input
+                          type="file"
+                          accept=".png,.jpg,.jpeg,.webp"
+                          onChange={(event) => handleGalleryImageChange(index, event)}
+                          aria-label={`Add gallery photo ${index + 1}`}
+                        />
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              ) : activePage === 1 ? (
+                <div className="media-page">
+                  <textarea
+                    className="page-title-input"
+                    name="title"
+                    value={page.title}
+                    onChange={updatePage}
+                    aria-label="Media page title"
+                    rows={1}
+                  />
+                  <p className="media-page-intro">Artists and music styles I enjoy.</p>
+                  <div className="music-list">
+                    {musicItems.map((item) => (
+                      <div className="music-item" key={item.name}>
+                        <span className="music-item-icon" aria-hidden="true">♫</span>
+                        <strong>{item.name}</strong>
+                        <span className="music-item-label">{item.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : activePage === 3 ? (
+                <div className="hobbies-page">
+                  <textarea
+                    className="page-title-input"
+                    name="title"
+                    value={page.title}
+                    onChange={updatePage}
+                    aria-label="Hobbies page title"
+                    rows={1}
+                  />
+                  <p className="hobbies-page-intro">Some of the sports teams I like.</p>
+                  <div className="sports-favorites">
+                    {sportsTeams.map((team) => (
+                      <div className="sports-card" key={team.name}>
+                        <div className={`sports-card-art ${team.className}`} aria-hidden="true">
+                          <span>{team.symbol}</span>
+                          <strong>{team.sport}</strong>
+                        </div>
+                        <strong className="sports-card-name">{team.name}</strong>
+                      </div>
+                    ))}
+                  </div>
+                  <textarea
+                    className="page-body-input hobbies-body-input"
+                    name="body"
+                    value={page.body}
+                    onChange={updatePage}
+                    aria-label="Hobbies page content"
+                  />
+                </div>
               ) : (
                 <>
-                  {/* Terracotta Circular Plus Button */}
-                  <div className="w-12 h-12 rounded-full bg-[#cf6d4e] text-white flex items-center justify-center shadow-xs mb-3.5 group-hover:scale-105 transition-transform">
-                    <Plus className="w-5 h-5 stroke-[2.5]" />
-                  </div>
-                  {/* "Add one photo" label */}
-                  <span className="text-stone-400 font-sans text-sm sm:text-base font-normal">
-                    Add one photo
-                  </span>
+                  <textarea
+                    className="page-title-input"
+                    name="title"
+                    value={page.title}
+                    onChange={updatePage}
+                    placeholder="Add a page title..."
+                    aria-label="Page title"
+                    rows={1}
+                  />
+                  <textarea
+                    className="page-body-input"
+                    name="body"
+                    value={page.body}
+                    onChange={updatePage}
+                    placeholder="Write something about this page..."
+                    aria-label="Page content"
+                  />
                 </>
               )}
             </div>
+            <footer className="page-footer">
+              <span>Page {page.id} of {pages.length}</span>
+              <em>{page.footer}</em>
+            </footer>
+          </section>
 
-            {/* DOB Section in Cursive */}
-            <div className="text-center mt-8 select-none">
-              <h2 className="font-cursive text-6xl sm:text-7xl md:text-8xl text-[#cf6d4e] leading-none">
-                DOB: 06/15/12
-              </h2>
-              <p className="font-cursive text-3xl sm:text-4xl text-[#6c5b52] mt-2">
-                June 15, 2012
-              </p>
-              <button
-                onClick={() => homeFileInputRef.current?.click()}
-                className="font-cursive text-2xl sm:text-3xl text-[#cf6d4e] mt-3 underline underline-offset-4 decoration-[#cf6d4e]/70 hover:opacity-80 transition-opacity cursor-pointer block mx-auto"
-              >
-                Upload your own picture
-              </button>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'gallery' && (
-          /* GALLERY TAB: Scrapbook Collage matching screenshot */
-          <div className="w-full flex flex-col items-center animate-fade-in">
-            <ScrapbookCollage
-              photos={collagePhotos}
-              bannerText={bannerText}
-              onUpdatePhoto={handleUpdateCollagePhoto}
-              onResetPhoto={handleResetCollagePhoto}
-              onUpdateBannerText={setBannerText}
-            />
-          </div>
-        )}
-
-        {(activeTab === 'media' || activeTab === 'hobbies') && (
-          /* MEDIA & HOBBIES TABS */
-          <div className="w-full max-w-2xl mx-auto flex flex-col items-center animate-fade-in">
-            <div className="w-full text-center mb-6">
-              <input
-                type="text"
-                value={sections[activeTab].title}
-                onChange={e => handleUpdateSection(activeTab, { title: e.target.value })}
-                className="font-serif-italic font-bold text-3xl sm:text-4xl md:text-5xl text-[#cf6d4e] text-center bg-transparent border-b border-transparent hover:border-stone-200 focus:border-[#cf6d4e] focus:outline-hidden py-1 px-3 transition-all w-full"
-                placeholder={TABS.find(t => t.key === activeTab)?.label}
-              />
-            </div>
-
-            <div className="w-full bg-white rounded-[32px] p-8 sm:p-10 shadow-xs border border-stone-200/50 min-h-[420px] flex flex-col">
-              <textarea
-                value={sections[activeTab].notes}
-                onChange={e => handleUpdateSection(activeTab, { notes: e.target.value })}
-                placeholder={`Share your thoughts, favorites, and ideas about ${TABS.find(t => t.key === activeTab)?.label}...`}
-                className="w-full flex-1 min-h-[340px] bg-transparent text-stone-800 text-base sm:text-lg leading-relaxed placeholder:text-stone-400 focus:outline-hidden resize-none"
-              />
-
-              <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-xs text-stone-400 select-none">
-                <span className="capitalize">{activeTab} section</span>
-                <span className="italic text-[#cf6d4e]">
-                  {sections[activeTab].notes.trim().length > 0 ? 'Saved automatically' : 'Ready for your ideas'}
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
+        </div>
       </main>
     </div>
   );
 }
+
+export default App;

@@ -21,12 +21,12 @@ const SLOT_HINTS: Record<CollageSlotId, string> = {
 };
 
 const DEFAULT_FALLBACKS: Record<CollageSlotId, string> = {
-  'top-left': '/sunset_beach.jpg',
-  'top-right': '/sunny_selfie.jpg',
-  'center': '/center_2026.jpg',
-  'bottom-left': '/besties_diner.jpg',
-  'bottom-center': '/friends_wall.jpg',
-  'bottom-right': '/mirror_selfie.jpg',
+  'top-left': '/gallery-photo-1.jpg',
+  'top-right': '/gallery-photo-2.jpg',
+  'center': '/gallery-photo.png',
+  'bottom-left': '/gallery-photo-3.jpg',
+  'bottom-center': '/gallery-photo-5.jpg',
+  'bottom-right': '/gallery-photo-4.jpg',
 };
 
 export function ScrapbookCollage({

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, type ChangeEvent, type MouseEvent, type DragEvent } from 'react';
 import { TabKey, TabConfig, CollageSlotId, MediaItem, SportCard } from './types';
-import { X, Square, Music2, Zap, Upload } from 'lucide-react';
+import { X, Square, Music2, Zap, Upload, Mail, Check } from 'lucide-react';
 import { ScrapbookCollage } from './components/ScrapbookCollage';
 
 const TABS: TabConfig[] = [
@@ -11,12 +11,12 @@ const TABS: TabConfig[] = [
 ];
 
 const DEFAULT_COLLAGE_PHOTOS: Record<CollageSlotId, string> = {
-  'top-left': '/sunset_beach.jpg',
-  'top-right': '/sunny_selfie.jpg',
-  'center': '/center_2026.jpg',
-  'bottom-left': '/besties_diner.jpg',
-  'bottom-center': '/friends_wall.jpg',
-  'bottom-right': '/mirror_selfie.jpg',
+  'top-left': '/gallery-photo-1.jpg',
+  'top-right': '/gallery-photo-2.jpg',
+  'center': '/gallery-photo.png',
+  'bottom-left': '/gallery-photo-3.jpg',
+  'bottom-center': '/gallery-photo-5.jpg',
+  'bottom-right': '/gallery-photo-4.jpg',
 };
 
 const DEFAULT_MEDIA_ITEMS: MediaItem[] = [
@@ -51,13 +51,13 @@ export default function App() {
 
   // Home slide main photo
   const [userPhoto, setUserPhoto] = useState<string | null>(() => {
-    return localStorage.getItem('gabriella_real_home_photo_v7') || '/mirror_selfie.jpg';
+    return localStorage.getItem('gabriella_real_home_photo_exact') || '/profile-photo.jpg';
   });
 
   // Collage photos by slot ID
   const [collagePhotos, setCollagePhotos] = useState<Record<CollageSlotId, string>>(() => {
     try {
-      const saved = localStorage.getItem('gabriella_real_collage_photos_v7');
+      const saved = localStorage.getItem('gabriella_real_collage_photos_exact');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (typeof parsed === 'object' && parsed !== null && Object.keys(parsed).length > 0) {
@@ -86,13 +86,31 @@ export default function App() {
     return localStorage.getItem('gabriella_hobbies_text_v1') || DEFAULT_HOBBIES_TEXT;
   });
 
+  // Message form state (Home page)
+  const [messageName, setMessageName] = useState('');
+  const [messageEmail, setMessageEmail] = useState('');
+  const [messageQuestion, setMessageQuestion] = useState('');
+  const [messageSent, setMessageSent] = useState(false);
+
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!messageName.trim() && !messageQuestion.trim()) return;
+    setMessageSent(true);
+    setTimeout(() => {
+      setMessageSent(false);
+      setMessageName('');
+      setMessageEmail('');
+      setMessageQuestion('');
+    }, 3500);
+  };
+
   const [homeIsDragging, setHomeIsDragging] = useState(false);
   const homeFileInputRef = useRef<HTMLInputElement>(null);
   const batchFileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     try {
-      localStorage.setItem('gabriella_real_collage_photos_v7', JSON.stringify(collagePhotos));
+      localStorage.setItem('gabriella_real_collage_photos_exact', JSON.stringify(collagePhotos));
     } catch {
       // ignore
     }
@@ -125,7 +143,7 @@ export default function App() {
 
         if (name.includes('6E500461') || name.includes('MIRROR')) {
           setUserPhoto(dataUrl);
-          localStorage.setItem('gabriella_real_home_photo_v7', dataUrl);
+          localStorage.setItem('gabriella_real_home_photo_exact', dataUrl);
           setCollagePhotos(prev => ({ ...prev, 'bottom-right': dataUrl }));
         } else if (name.includes('318A83CA') || name.includes('WALL')) {
           setCollagePhotos(prev => ({ ...prev, 'bottom-center': dataUrl }));
@@ -161,7 +179,7 @@ export default function App() {
     reader.onload = () => {
       if (typeof reader.result === 'string') {
         setUserPhoto(reader.result);
-        localStorage.setItem('gabriella_real_home_photo_v7', reader.result);
+        localStorage.setItem('gabriella_real_home_photo_exact', reader.result);
       }
     };
     reader.readAsDataURL(file);
@@ -170,7 +188,7 @@ export default function App() {
   const handleRemoveHomePhoto = (e: MouseEvent) => {
     e.stopPropagation();
     setUserPhoto(null);
-    localStorage.removeItem('gabriella_real_home_photo_v7');
+    localStorage.removeItem('gabriella_real_home_photo_exact');
     if (homeFileInputRef.current) {
       homeFileInputRef.current.value = '';
     }
@@ -303,12 +321,12 @@ export default function App() {
               {userPhoto ? (
                 <>
                   <img
-                    src={userPhoto || '/mirror_selfie.jpg'}
+                    src={userPhoto || '/profile-photo.jpg'}
                     alt="Gabriella"
                     onError={(e) => {
                       const target = e.currentTarget;
-                      if (target.src !== '/mirror_selfie.jpg' && !target.src.endsWith('/mirror_selfie.jpg')) {
-                        target.src = '/mirror_selfie.jpg';
+                      if (target.src !== '/profile-photo.jpg' && !target.src.endsWith('/profile-photo.jpg')) {
+                        target.src = '/profile-photo.jpg';
                       }
                     }}
                     referrerPolicy="no-referrer"
@@ -367,6 +385,87 @@ export default function App() {
               >
                 Upload your own picture
               </button>
+            </div>
+
+            {/* Message Me Card - Exactly matching Screenshot */}
+            <div className="w-full max-w-xl bg-white rounded-[32px] p-6 sm:p-8 border border-[#eed5e4]/70 shadow-xs mt-10 text-left">
+              {/* Header with Circle Icon */}
+              <div className="flex items-start gap-3.5 mb-1.5">
+                <div className="w-10 h-10 rounded-full bg-[#9c57a4] text-white flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                  <Mail className="w-5 h-5 stroke-[2]" />
+                </div>
+                <div className="flex-1">
+                  <span className="block text-xs font-bold uppercase tracking-wider text-[#9c57a4]">
+                    MESSAGE ME
+                  </span>
+                  <h3 className="font-cursive text-3xl sm:text-4xl text-[#9c57a4] leading-tight mt-0.5">
+                    Have any questions about anything?
+                  </h3>
+                </div>
+              </div>
+
+              {/* Subtext */}
+              <p className="text-[#8c6a9d] text-sm sm:text-base font-medium mb-6">
+                Send me a message and I'll get back to you.
+              </p>
+
+              {/* Form */}
+              <form onSubmit={handleSendMessage} className="space-y-4 w-full">
+                <div>
+                  <label className="block text-[#4a434c] font-semibold text-sm mb-1.5">
+                    Your name
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Your name"
+                    value={messageName}
+                    onChange={e => setMessageName(e.target.value)}
+                    className="w-full px-4 py-3 rounded-2xl bg-white border border-[#eed5e4] text-stone-800 placeholder-[#b6a8b7] text-sm sm:text-base focus:outline-hidden focus:ring-2 focus:ring-[#9c57a4]/25 focus:border-[#9c57a4] transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[#4a434c] font-semibold text-sm mb-1.5">
+                    Your email
+                  </label>
+                  <input
+                    type="email"
+                    placeholder="you@example.com"
+                    value={messageEmail}
+                    onChange={e => setMessageEmail(e.target.value)}
+                    className="w-full px-4 py-3 rounded-2xl bg-white border border-[#eed5e4] text-stone-800 placeholder-[#b6a8b7] text-sm sm:text-base focus:outline-hidden focus:ring-2 focus:ring-[#9c57a4]/25 focus:border-[#9c57a4] transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[#4a434c] font-semibold text-sm mb-1.5">
+                    Your question
+                  </label>
+                  <textarea
+                    rows={4}
+                    placeholder="Write your message here..."
+                    value={messageQuestion}
+                    onChange={e => setMessageQuestion(e.target.value)}
+                    className="w-full px-4 py-3 rounded-2xl bg-white border border-[#eed5e4] text-stone-800 placeholder-[#b6a8b7] text-sm sm:text-base focus:outline-hidden focus:ring-2 focus:ring-[#9c57a4]/25 focus:border-[#9c57a4] transition-all resize-y min-h-[110px]"
+                  />
+                </div>
+
+                <div className="flex flex-col items-center justify-center pt-2">
+                  {messageSent ? (
+                    <div className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#faeae1] text-[#9c57a4] font-medium text-sm">
+                      <Check className="w-4 h-4 stroke-[2.5]" />
+                      <span>Message sent! Thank you.</span>
+                    </div>
+                  ) : (
+                    <button
+                      type="submit"
+                      className="px-8 py-2.5 rounded-full bg-[#9c57a4] hover:bg-[#8b4c93] text-white shadow-xs transition-transform active:scale-95 cursor-pointer font-cursive text-2xl sm:text-3xl font-normal tracking-wide"
+                    >
+                      Send me a message
+                    </button>
+                  )}
+                </div>
+              </form>
             </div>
           </div>
         )}

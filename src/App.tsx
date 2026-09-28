@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef, type ChangeEvent, type MouseEvent, type DragEvent } from 'react';
+import { useState, useEffect, useRef, type ChangeEvent, type MouseEvent, type DragEvent, type FormEvent } from 'react';
 import { TabKey, TabConfig, CollageSlotId, MediaItem, SportCard } from './types';
-import { X, Square, Music2, Zap, Upload, Mail, Check } from 'lucide-react';
+import { X, Square, Music2, Zap, Upload, Mail } from 'lucide-react';
 import { ScrapbookCollage } from './components/ScrapbookCollage';
 
 const TABS: TabConfig[] = [
@@ -90,18 +90,20 @@ export default function App() {
   const [messageName, setMessageName] = useState('');
   const [messageEmail, setMessageEmail] = useState('');
   const [messageQuestion, setMessageQuestion] = useState('');
-  const [messageSent, setMessageSent] = useState(false);
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!messageName.trim() && !messageQuestion.trim()) return;
-    setMessageSent(true);
-    setTimeout(() => {
-      setMessageSent(false);
-      setMessageName('');
-      setMessageEmail('');
-      setMessageQuestion('');
-    }, 3500);
+    const subject = messageName.trim()
+      ? `Question from ${messageName.trim()}`
+      : 'Question from Gabriella’s website';
+    const body = [
+      `Name: ${messageName.trim() || 'Not provided'}`,
+      `Email: ${messageEmail.trim()}`,
+      '',
+      messageQuestion.trim(),
+    ].join('\n');
+
+    window.location.href = `mailto:mmilesgabriella85@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
   const [homeIsDragging, setHomeIsDragging] = useState(false);
@@ -379,16 +381,10 @@ export default function App() {
               <p className="font-cursive text-3xl sm:text-4xl text-[#6c5b52] mt-2">
                 June 15, 2012
               </p>
-              <button
-                onClick={() => homeFileInputRef.current?.click()}
-                className="font-cursive text-2xl sm:text-3xl text-[#cf6d4e] mt-3 underline underline-offset-4 decoration-[#cf6d4e]/70 hover:opacity-80 transition-opacity cursor-pointer block mx-auto"
-              >
-                Upload your own picture
-              </button>
             </div>
 
             {/* Message Me Card - Exactly matching Screenshot */}
-            <div className="w-full max-w-xl bg-white rounded-[32px] p-6 sm:p-8 border border-[#eed5e4]/70 shadow-xs mt-10 text-left">
+            <div className="message-bubble-card w-full max-w-xl bg-white rounded-[32px] p-6 sm:p-8 border border-[#eed5e4]/70 shadow-xs mt-10 text-left">
               {/* Header with Circle Icon */}
               <div className="flex items-start gap-3.5 mb-1.5">
                 <div className="w-10 h-10 rounded-full bg-[#9c57a4] text-white flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
@@ -433,6 +429,7 @@ export default function App() {
                     placeholder="you@example.com"
                     value={messageEmail}
                     onChange={e => setMessageEmail(e.target.value)}
+                    required
                     className="w-full px-4 py-3 rounded-2xl bg-white border border-[#eed5e4] text-stone-800 placeholder-[#b6a8b7] text-sm sm:text-base focus:outline-hidden focus:ring-2 focus:ring-[#9c57a4]/25 focus:border-[#9c57a4] transition-all"
                   />
                 </div>
@@ -446,27 +443,30 @@ export default function App() {
                     placeholder="Write your message here..."
                     value={messageQuestion}
                     onChange={e => setMessageQuestion(e.target.value)}
+                    required
                     className="w-full px-4 py-3 rounded-2xl bg-white border border-[#eed5e4] text-stone-800 placeholder-[#b6a8b7] text-sm sm:text-base focus:outline-hidden focus:ring-2 focus:ring-[#9c57a4]/25 focus:border-[#9c57a4] transition-all resize-y min-h-[110px]"
                   />
                 </div>
 
                 <div className="flex flex-col items-center justify-center pt-2">
-                  {messageSent ? (
-                    <div className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#faeae1] text-[#9c57a4] font-medium text-sm">
-                      <Check className="w-4 h-4 stroke-[2.5]" />
-                      <span>Message sent! Thank you.</span>
-                    </div>
-                  ) : (
-                    <button
-                      type="submit"
-                      className="px-8 py-2.5 rounded-full bg-[#9c57a4] hover:bg-[#8b4c93] text-white shadow-xs transition-transform active:scale-95 cursor-pointer font-cursive text-2xl sm:text-3xl font-normal tracking-wide"
-                    >
-                      Send me a message
-                    </button>
-                  )}
+                  <button
+                    type="submit"
+                    className="px-8 py-2.5 rounded-full bg-[#9c57a4] hover:bg-[#8b4c93] text-white shadow-xs transition-transform active:scale-95 cursor-pointer font-cursive text-2xl sm:text-3xl font-normal tracking-wide"
+                  >
+                    Send me a message
+                  </button>
+                  <p className="mt-3 text-center text-xs text-[#8c6a9d]">
+                    Your email app will open with the message ready to send.
+                  </p>
                 </div>
               </form>
             </div>
+            <button
+              onClick={() => homeFileInputRef.current?.click()}
+              className="font-cursive text-2xl sm:text-3xl text-[#cf6d4e] mt-6 underline underline-offset-4 decoration-[#cf6d4e]/70 hover:opacity-80 transition-opacity cursor-pointer block mx-auto"
+            >
+              Upload your own picture
+            </button>
           </div>
         )}
 

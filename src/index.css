@@ -1333,3 +1333,21 @@ button:disabled {
     font-size: 3.2rem;
   }
 }
+
+.message-bubble-card {
+  position: relative;
+  border-radius: 32px 32px 32px 8px;
+}
+
+.message-bubble-card::after {
+  position: absolute;
+  bottom: -10px;
+  left: 28px;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-right: 1px solid #eed5e4;
+  border-bottom: 1px solid #eed5e4;
+  content: '';
+  transform: skewY(28deg) rotate(28deg);
+}
